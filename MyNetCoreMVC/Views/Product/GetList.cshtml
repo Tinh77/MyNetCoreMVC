@@ -1,7 +1,19 @@
-﻿
+﻿@model List<Product>
 @{
     ViewData["Title"] = "GetList";
 }
 
 <h2>GetList</h2>
+<div class="alert-success">@TempData["message"]</div>
+<ul>
+    @foreach (var product in Model)
+    {
+        <li>
+            <span>@product.name - @product.price</span>
+            <span><a href="/Product/Edit?id=@product.id">Edit</a></span>
+            <span><a class="btnDelete" id="@product.id">Delete</a></span>
+        </li>
+    }
+</ul>
+
 

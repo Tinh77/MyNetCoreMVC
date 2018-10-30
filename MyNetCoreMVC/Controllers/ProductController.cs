@@ -9,30 +9,73 @@ namespace MyNetCoreMVC.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly MyDbContext _context;
+
+        public ProductController(MyDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult GetList()
         {
             
-            return View();
+            return View(_context.Products.ToList());
         }
         
-        public IActionResult Create(string name, string price)
-        {
-            ViewData["name"] = name;
-            ViewData["price"] = price;
-            return View();
-        }
-
-        public IActionResult Update()
+        public IActionResult Create()
         {
             return View();
         }
 
-        [Route("Product/Delete/{id:int}")]
-        public IActionResult Delete(int id)
+        [HttpPost]
+        public IActionResult Save(Product product)
         {
-            return new JsonResult(new Product() {
-                id = id
-            });
+            if (_context.Products.Count() == 0)
+            {
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                TempData["message"] = "Create success";
+            }
+
+            return Redirect("GetList");
+        }
+
+        public IActionResult Edit(long id)
+        {
+           var product = _context.Products.Find(id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        public IActionResult Update(Product product)
+        {
+            var exisProduct = _context.Products.Find(product.id);
+            if(exisProduct == null)
+            {
+                return NotFound();
+            }
+            exisProduct.name = product.name;
+            exisProduct.price = product.price;
+            _context.Products.Update(exisProduct);
+            _context.SaveChanges();
+            TempData["message"] = "Update success";
+            return Redirect("GetList");
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(long id)
+        {
+            var product = _context.Products.Find(id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+            _context.Products.Remove(product);
+            _context.SaveChanges();
+            return Redirect("GetList");
         }
     }
 }

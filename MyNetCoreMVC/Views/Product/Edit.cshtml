@@ -1,0 +1,13 @@
+﻿@model MyNetCoreMVC.Models.Product
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<form action="Update" method="post">
+    <input type="hidden" name="id" value="@Model.id"  />
+    Name <input type="type" name="name" value="@Model.name" />
+    Price <input type="number" name="price" value="@Model.price" />
+    <input type="submit" value="Submit" />
+</form>
